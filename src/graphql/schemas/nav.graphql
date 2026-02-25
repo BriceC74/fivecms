@@ -1,0 +1,11 @@
+type NavItem {
+  id: ID!
+  title: String!
+  slug: String!
+  url: String!
+  children: [NavItem]
+}
+
+type Query {
+  nav(name: String!): [NavItem!]!
+}

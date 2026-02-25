@@ -17,8 +17,10 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "type-check": "tsc --noEmit",
-    "build": "npm run type-check && swc src -d dist --strip-leading-paths",
+    "copy-schemas": "mkdir -p dist/graphql/schemas && cp -v src/graphql/schemas/* dist/graphql/schemas/",
+    "build": "npm run type-check && npm run clean && swc src -d dist --strip-leading-paths && npm run copy-schemas",
     "start": "node dist/index.js",
+    "build.start": "npm run build && npm run start",
     "dev": "node src/index.ts",
     "clean": "rm -rf dist"
   },

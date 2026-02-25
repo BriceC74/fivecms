@@ -1,0 +1,12 @@
+type Content {
+  path: String!
+  markdown: String!
+  frontmatter: JSON
+}
+
+scalar JSON
+
+type Query {
+  content(path: String!): Content!
+  contents: [Content!]
+}

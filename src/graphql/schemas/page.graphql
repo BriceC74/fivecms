@@ -1,0 +1,21 @@
+type Page {
+	id: ID!
+	title: String!
+	description: String!
+	slug: String!
+	content: String!
+	seo: SEOInput
+}
+
+type SEOInput {
+	title: String
+	description: String
+	og: OpenGraph
+}
+
+type OpenGraph {
+	image: String
+	title: String
+	description: String
+	url: String
+}
