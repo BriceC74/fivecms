@@ -1,0 +1,23 @@
+{
+  "name": "fivecms",
+  "version": "26.2.1",
+  "description": "A flat-file CMS designed to be as flexible as possible.",
+  "homepage": "https://github.com/BriceC74/fivecms#readme",
+  "bugs": {
+    "url": "https://github.com/BriceC74/fivecms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BriceC74/fivecms.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  }
+}
