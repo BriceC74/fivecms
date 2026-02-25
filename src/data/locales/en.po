@@ -1,0 +1,25 @@
+# Home page translations (English-first, so msgstr is empty)
+msgid ""
+msgstr ""
+
+# Home page content
+msgid "Welcome to FiveCMS"
+msgstr ""
+
+msgid "This is a sample page demonstrating the flat-file CMS approach."
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Markdown content with frontmatter"
+msgstr ""
+
+msgid "PO file translations"
+msgstr ""
+
+msgid "GraphQL API access"
+msgstr ""
+
+msgid "Language-agnostic design"
+msgstr ""

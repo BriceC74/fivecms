@@ -1,0 +1,16 @@
+# About page translations (English-first, so msgstr is empty)
+msgid ""
+msgstr ""
+
+# About page content
+msgid "About Our Company"
+msgstr ""
+
+msgid "We are a team dedicated to building flexible content management solutions."
+msgstr ""
+
+msgid "Our Mission"
+msgstr ""
+
+msgid "To create a CMS that adapts to your needs, not the other way around."
+msgstr ""

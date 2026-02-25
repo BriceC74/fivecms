@@ -1,0 +1,10 @@
+# Main Navigation Header
+- title: Home
+  slug: /
+  url: /#home
+- title: About
+  slug: /about
+  url: /#about
+- title: Blog
+  slug: /blog
+  url: /#blog
