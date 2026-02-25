@@ -16,8 +16,20 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "build": "npm run type-check && swc src -d dist --strip-leading-paths",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "node src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@apollo/server": "*",
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@swc/cli": "*",
+    "@swc/core": "*",
+    "@types/node": "*",
+    "typescript": "*"
   }
 }
