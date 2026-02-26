@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@apollo/server": "*",
-    "graphql": "*"
+    "graphql": "*",
+    "gray-matter": "*"
   },
   "devDependencies": {
     "@swc/cli": "*",
