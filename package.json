@@ -28,7 +28,8 @@
   "dependencies": {
     "@apollo/server": "*",
     "graphql": "*",
-    "gray-matter": "*"
+    "gray-matter": "*",
+    "unified": "*"
   },
   "devDependencies": {
     "@swc/cli": "*",
