@@ -16,6 +16,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "vitest",
     "type-check": "tsc --noEmit",
     "copy-schemas": "mkdir -p dist/graphql/schemas && cp -rv src/graphql/schemas/* dist/graphql/schemas/",
     "copy-data": "mkdir -p dist/data/ && cp -rv src/data/* dist/data/",
@@ -35,6 +36,9 @@
     "@swc/cli": "*",
     "@swc/core": "*",
     "@types/node": "*",
-    "typescript": "*"
+    "@vitest/coverage-v8": "*",
+    "typescript": "*",
+    "vite": "*",
+    "vitest": "*"
   }
 }
