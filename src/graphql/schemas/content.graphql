@@ -1,6 +1,6 @@
 type Content {
   path: String!
-  markdown: String!
+  rawMarkdown: String!
   frontmatter: JSON
 }
 

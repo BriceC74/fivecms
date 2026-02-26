@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import matter from "gray-matter";
 
 type Content = {
 	path: string;
@@ -17,7 +18,11 @@ const getContents = (): Content[] => {
 		if (typeof file !== "string") continue;
 
 		if (file.endsWith(".md")) {
-			contents.push({ path: file, markdown: getMarkdown(file) });
+			const filePath = path.join(CONTENT_PATH, file);
+
+			const rawMarkdown = getMarkdown(filePath);
+			const frontmatter = matter(rawMarkdown);
+			contents.push({ path: file, rawMarkdown, frontmatter });
 		}
 	}
 
@@ -26,6 +31,6 @@ const getContents = (): Content[] => {
 
 export default getContents;
 
-const getMarkdown = (file: string): string => {
-	return fs.readFileSync(path.join(CONTENT_PATH, file), { encoding: "utf-8" });
+const getMarkdown = (filePath: string): string => {
+	return fs.readFileSync(filePath, { encoding: "utf-8" });
 };
