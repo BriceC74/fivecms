@@ -30,6 +30,8 @@
     "@apollo/server": "*",
     "graphql": "*",
     "gray-matter": "*",
+    "remark-parse": "*",
+    "remark-stringify": "*",
     "unified": "*"
   },
   "devDependencies": {

@@ -1,11 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { FiveMarkdowns, parseMarkdown } from "./ParseMarkdown";
 
 type Content = {
 	path: string;
 	rawMarkdown: string;
 	frontmatter?: matter.GrayMatterFile<string>;
+	sections: FiveMarkdowns;
 };
 
 export class getContentsClass {
@@ -38,7 +40,9 @@ export class getContentsClass {
 		const rawMarkdown = this.getMarkdown(absoluteFilePath);
 		const frontmatter = matter(rawMarkdown);
 
-		return { path: absoluteFilePath, rawMarkdown, frontmatter };
+		const sections = parseMarkdown(rawMarkdown);
+
+		return { path: absoluteFilePath, rawMarkdown, frontmatter, sections };
 	}
 
 	static getMarkdown(filePath: string): string {

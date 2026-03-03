@@ -1,7 +1,8 @@
 import { beforeEach, vi, describe, expect, it } from "vitest";
-import { getContent, getContents, getContentsClass, getMarkdown } from "../getContents";
+import { getContent, getContents, getContentsClass, getMarkdown } from "../GetContents";
 import fs from "node:fs";
 import * as matter from "gray-matter";
+import { parseMarkdown } from "../ParseMarkdown";
 
 let spiedGM = vi.spyOn(getContentsClass, "getMarkdown");
 let spiedGC = vi.spyOn(getContentsClass, "getContent");
@@ -9,6 +10,7 @@ let spiedGCP = vi.spyOn(getContentsClass, "CONTENT_PATH", "get");
 let spiedRDS = vi.spyOn(fs, "readdirSync");
 let spiedRFS = vi.spyOn(fs, "readFileSync");
 vi.mock("gray-matter", { spy: true });
+vi.mock("../parseMarkdown", { spy: true });
 
 let mockedFrontmatter = {
 	data: {
@@ -32,6 +34,7 @@ beforeEach(() => {
 	spiedRDS = vi.spyOn(fs, "readdirSync");
 	spiedRFS = vi.spyOn(fs, "readFileSync");
 	vi.mock("gray-matter", { spy: true });
+	vi.mock("../ParseMarkdown", { spy: true });
 
 	spiedGCP.mockImplementation(() => "/test/path");
 
@@ -50,12 +53,18 @@ beforeEach(() => {
 		stringify: () => "",
 	};
 	vi.mocked(matter.default).mockImplementation(() => mockedFrontmatter);
+	vi.mocked(parseMarkdown).mockImplementation(() => []);
 });
 
 describe("getContents", () => {
 	it(`should call "getContent" with the correct path`, () => {
 		spiedGM.mockImplementation(() => "");
-		spiedGC.mockImplementation(() => ({ path: "/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter }));
+		spiedGC.mockImplementation(() => ({
+			path: "/page.md",
+			rawMarkdown: "",
+			frontmatter: mockedFrontmatter,
+			sections: [],
+		}));
 
 		getContents();
 
@@ -66,12 +75,22 @@ describe("getContents", () => {
 
 	it("should return an array of content objects", () => {
 		spiedGM.mockImplementation(() => "");
-		spiedGC.mockImplementationOnce(() => ({ path: "/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter }));
-		spiedGC.mockImplementationOnce(() => ({ path: "about/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter }));
+		spiedGC.mockImplementationOnce(() => ({
+			path: "/page.md",
+			rawMarkdown: "",
+			frontmatter: mockedFrontmatter,
+			sections: [],
+		}));
+		spiedGC.mockImplementationOnce(() => ({
+			path: "about/page.md",
+			rawMarkdown: "",
+			frontmatter: mockedFrontmatter,
+			sections: [],
+		}));
 
 		const expectedResult = [
-			{ path: "/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter },
-			{ path: "about/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter },
+			{ path: "/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter, sections: [] },
+			{ path: "about/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter, sections: [] },
 		];
 
 		const result = getContents();
@@ -91,10 +110,22 @@ describe("getContent", () => {
 		expect(spiedGM).toHaveBeenNthCalledWith(1, "/test/path/page.md");
 	});
 
+	it(`shoudl call "parseMarkdown"`, () => {
+		getContent("/");
+
+		expect(parseMarkdown).toBeCalledTimes(1);
+		expect(parseMarkdown).toBeCalledWith("# Mocked markdown");
+	});
+
 	it("should return an array of content objects", () => {
 		spiedGM.mockImplementation(() => "");
 
-		const expectedResult = { path: "/test/path/page.md", rawMarkdown: "", frontmatter: mockedFrontmatter };
+		const expectedResult = {
+			path: "/test/path/page.md",
+			rawMarkdown: "",
+			frontmatter: mockedFrontmatter,
+			sections: [],
+		};
 
 		const result = getContent("/");
 

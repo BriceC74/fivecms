@@ -1,12 +1,35 @@
 type Content {
-  path: String!
-  rawMarkdown: String!
-  frontmatter: JSON
+	path: String!
+	rawMarkdown: String!
+	frontmatter: JSON
+	sections: [Component]
+}
+
+type Component {
+	ComponentName: String!
+	rawSection: String
+	elements: [Element]
+	children: [Component]
+}
+
+union Element = FiveHeadingElement | FiveParagraphElement
+
+type FiveHeadingElement {
+	heading: HeadingElement
+}
+
+type HeadingElement {
+	level: Int!
+	text: String!
+}
+
+type FiveParagraphElement {
+	paragraph: String!
 }
 
 scalar JSON
 
 type Query {
-  content(path: String!): Content!
-  contents: [Content!]
+	content(path: String!): Content!
+	contents: [Content!]
 }
