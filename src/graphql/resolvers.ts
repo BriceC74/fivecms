@@ -8,6 +8,16 @@ export const resolvers = {
 			return null;
 		},
 	},
+	Component: {
+		children: async (parent, { depth = 3 }) => {
+			if (depth <= 0 || !parent.children) return null;
+
+			return parent.children.map((child) => ({
+				...child,
+				_resolverDepth: depth - 1,
+			}));
+		},
+	},
 	Query: {
 		contents(_: any) {
 			return getContents();
@@ -17,3 +27,32 @@ export const resolvers = {
 		},
 	},
 };
+
+/*
+query ExampleQuery($path: String!) {
+  content(path: $path) {
+    sections {
+      ...ComponentFields
+      children(depth: 3) {
+        ...ComponentFields
+      }
+    }
+  }
+}
+
+fragment ComponentFields on Component {
+  ComponentName
+  rawSection
+  elements {
+    ... on FiveHeadingElement {
+      heading {
+        level
+        text
+      }
+    }
+    ... on FiveParagraphElement {
+      paragraph
+    }
+  }
+}
+*/

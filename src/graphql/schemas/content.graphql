@@ -27,6 +27,10 @@ type FiveParagraphElement {
 	paragraph: String!
 }
 
+extend type Component {
+	children(depth: Int): [Component]
+}
+
 scalar JSON
 
 type Query {

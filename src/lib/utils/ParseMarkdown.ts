@@ -89,24 +89,40 @@ export class ParseMarkdown {
 		return index;
 	}
 
-	static transformSection(mdast: RootContent[]): FiveMarkdown {
+	static transformSection(mdast: RootContent[], isChildren?: boolean): FiveMarkdown {
 		let ComponentName = "GenericComponent";
 
 		const elements: FiveSection = [];
+		const children: FiveMarkdowns = [];
 
+		let endIndex = mdast.length;
 		for (let i = 0; i < mdast.length; i++) {
 			const node = mdast[i];
+
+			if (node.type === "thematicBreak") {
+				if (!isChildren) {
+					const slicedMdast = mdast.slice(i + 1);
+					const nestedSection = this.transformSection(slicedMdast, true);
+					children.push(nestedSection);
+					i += nestedSection.elements.length;
+					continue;
+				}
+
+				endIndex = i;
+				break;
+			}
 
 			if (node.type === "heading" && !!node.children[0]) {
 				const child = node.children[0];
 
-				if (child.type === "text")
+				if (child.type === "text") {
 					elements.push({
 						heading: {
 							level: node.depth,
 							text: child.value,
 						},
 					});
+				}
 			}
 
 			if (node.type === "paragraph" && !!node.children[0]) {
@@ -120,17 +136,30 @@ export class ParseMarkdown {
 						continue;
 					}
 
+					if (child.value === `"--`) {
+						endIndex = i;
+						break;
+					}
+
 					elements.push({ paragraph: child.value });
 				}
 			}
 		}
 
-		const rawSection = unified().use(remarkStringify).stringify({ type: "root", children: mdast });
-		return {
+		const rawSection = unified()
+			.use(remarkStringify)
+			.stringify({ type: "root", children: mdast.slice(0, endIndex) })
+			.trim();
+
+		const section: FiveMarkdown = {
 			ComponentName,
 			rawSection,
 			elements,
 		};
+
+		if (!isChildren && children.length > 0) section.children = children;
+
+		return section;
 	}
 }
 

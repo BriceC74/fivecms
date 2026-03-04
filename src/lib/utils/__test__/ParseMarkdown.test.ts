@@ -45,48 +45,42 @@ let mdast: RootContent[] = [];
 
 const mockedComponentA: FiveMarkdown = {
 	ComponentName: "ComponentA",
-	rawSection: `# Heading 1
-
-ComponentA content.
-`,
+	rawSection: "# Heading 1\n\nComponentA content.",
 	elements: [{ heading: { level: 1, text: "Heading 1" } }, { paragraph: "ComponentA content." }],
 };
 
 const mockedComponentB: FiveMarkdown = {
 	ComponentName: "ComponentB",
-	rawSection: `## Heading 2
-
-ComponentB content.
-
-***
-
-### Heading 3 card 1
-
-Card 1 content.
-
-***
-
-### Heading 3 card 2
-
-Card 2 content.
-`,
-	elements: [
-		{ heading: { level: 2, text: "Heading 2" } },
-		{ paragraph: "ComponentB content." },
+	rawSection:
+		"## Heading 2\n\nComponentB content.\n\n***\n\n### Heading 3 card 1\n\nCard 1 content.\n\n***\n\n### Heading 3 card 2\n\nCard 2 content.",
+	elements: [{ heading: { level: 2, text: "Heading 2" } }, { paragraph: "ComponentB content." }],
+	children: [
 		{
-			heading: {
-				level: 3,
-				text: "Heading 3 card 1",
-			},
+			ComponentName: "GenericComponent",
+			rawSection: "### Heading 3 card 1\n\nCard 1 content.",
+			elements: [
+				{
+					heading: {
+						level: 3,
+						text: "Heading 3 card 1",
+					},
+				},
+				{ paragraph: "Card 1 content." },
+			],
 		},
-		{ paragraph: "Card 1 content." },
 		{
-			heading: {
-				level: 3,
-				text: "Heading 3 card 2",
-			},
+			ComponentName: "GenericComponent",
+			rawSection: "### Heading 3 card 2\n\nCard 2 content.",
+			elements: [
+				{
+					heading: {
+						level: 3,
+						text: "Heading 3 card 2",
+					},
+				},
+				{ paragraph: "Card 2 content." },
+			],
 		},
-		{ paragraph: "Card 2 content." },
 	],
 };
 
@@ -213,5 +207,66 @@ describe("transformSection", () => {
 		const result = transformSection(mdast);
 
 		expect(result).toStrictEqual(mockedComponentA);
+	});
+
+	it(`should call himself where there is a children`, () => {
+		const spiedOn = vi.spyOn(ParseMarkdown, "transformSection");
+
+		const mdast: RootContent[] = [
+			{ type: "paragraph", children: [{ type: "text", value: `--"ComponentB` }] },
+			{ type: "heading", depth: 2, children: [{ type: "text", value: "Heading 2" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "ComponentB content." }] },
+			{ type: "thematicBreak" },
+			{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 1" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "Card 1 content." }] },
+			{ type: "thematicBreak" },
+			{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 2" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "Card 2 content." }] },
+			{ type: "paragraph", children: [{ type: "text", value: `"--` }] },
+		];
+
+		transformSection(mdast);
+
+		expect(spiedOn).toBeCalledTimes(2);
+		expect(spiedOn).toHaveBeenNthCalledWith(
+			1,
+			[
+				{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 1" }] },
+				{ type: "paragraph", children: [{ type: "text", value: "Card 1 content." }] },
+				{ type: "thematicBreak" },
+				{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 2" }] },
+				{ type: "paragraph", children: [{ type: "text", value: "Card 2 content." }] },
+				{ type: "paragraph", children: [{ type: "text", value: `"--` }] },
+			],
+			true,
+		);
+		expect(spiedOn).toHaveBeenNthCalledWith(
+			2,
+			[
+				{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 2" }] },
+				{ type: "paragraph", children: [{ type: "text", value: "Card 2 content." }] },
+				{ type: "paragraph", children: [{ type: "text", value: `"--` }] },
+			],
+			true,
+		);
+	});
+
+	it("should return children", () => {
+		const mdast: RootContent[] = [
+			{ type: "paragraph", children: [{ type: "text", value: `--"ComponentB` }] },
+			{ type: "heading", depth: 2, children: [{ type: "text", value: "Heading 2" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "ComponentB content." }] },
+			{ type: "thematicBreak" },
+			{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 1" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "Card 1 content." }] },
+			{ type: "thematicBreak" },
+			{ type: "heading", depth: 3, children: [{ type: "text", value: "Heading 3 card 2" }] },
+			{ type: "paragraph", children: [{ type: "text", value: "Card 2 content." }] },
+			{ type: "paragraph", children: [{ type: "text", value: `"--` }] },
+		];
+
+		const result = transformSection(mdast);
+
+		expect(result).toStrictEqual(mockedComponentB);
 	});
 });
