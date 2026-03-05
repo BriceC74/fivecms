@@ -70,6 +70,7 @@ src/data/nav
 
 Each file can be called by a specific query in Graphql.
 It will return a list of nested links with options, like :
+
 - title
 - slug
 - url
@@ -84,6 +85,7 @@ That way you can manage your navigation system in a very flexible way.
 ### What about SEO?
 
 In every page.md file, you can add a front matter with SEO options, like :
+
 - title
 - description
 - og

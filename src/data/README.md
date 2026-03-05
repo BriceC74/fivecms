@@ -14,6 +14,7 @@ This directory contains all content files separate from the codebase.
 **Content should be completely independent of implementation language.**
 
 This allows you to:
+
 - Switch from TypeScript to Rust, Go, or any other language
 - Edit content without touching code
 - Version control content separately if needed

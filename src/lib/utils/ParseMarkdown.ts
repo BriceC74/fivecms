@@ -28,6 +28,13 @@ export type FiveHeading = {
 };
 
 export class ParseMarkdown {
+	/**
+	 * Parses a Markdown string into a structured AST using remark-parse.
+	 *
+	 * @param {string} md - The raw Markdown content to parse.
+	 * @returns {FiveMarkdowns} An array of processed content sections, each representing
+	 *   a component block defined by `--"ComponentName` and `"--` markers.
+	 */
 	static parseMarkdown(md: string): FiveMarkdowns {
 		const rawSection: Root = unified().use(remarkParse).parse(md);
 
@@ -36,6 +43,15 @@ export class ParseMarkdown {
 		return parsedMarkdown;
 	}
 
+	/**
+	 * Splits the MDAST into multiple sections by repeatedly extracting content
+	 * between component markers (`--"ComponentName` and `"--`).
+	 *
+	 * Each section is parsed into a `FiveMarkdown` object and collected into an array.
+	 *
+	 * @param {RootContent[]} mdast - The array of MDAST nodes to process.
+	 * @returns {FiveMarkdowns} An array of parsed component sections.
+	 */
 	static getSections(mdast: RootContent[]): FiveMarkdowns {
 		const sections: FiveMarkdowns = [];
 
@@ -48,6 +64,15 @@ export class ParseMarkdown {
 		return sections;
 	}
 
+	/**
+	 * Extracts a single content section from the MDAST by locating the first component marker.
+	 * Parses the section into a structured `FiveMarkdown` object and returns it with its end index.
+	 *
+	 * @param {RootContent[]} mdast - The array of MDAST nodes to process.
+	 * @returns {{ endIndex: number; section: FiveMarkdown }} An object containing:
+	 *   - `endIndex`: The index where the section ends (used for slicing).
+	 *   - `section`: The transformed `FiveMarkdown` object with component name, content elements, and nested children.
+	 */
 	static getSection(mdast: RootContent[]): { endIndex: number; section: FiveMarkdown } {
 		let startIndex = this.findStartIndex(mdast);
 		let endIndex = this.findEndIndex({ mdast, startIndex });
@@ -58,6 +83,13 @@ export class ParseMarkdown {
 		return { endIndex, section: transformedSection };
 	}
 
+	/**
+	 * Finds the index where a section begins, marked by a paragraph starting with `--"`.
+	 * Used to delimit the start of a component section in the Markdown AST.
+	 *
+	 * @param {RootContent[]} mdast - The array of MDAST nodes being processed.
+	 * @returns {number} The index of the starting marker, or 0 if not found.
+	 */
 	static findStartIndex(mdast: RootContent[]): number {
 		let index = 0;
 		for (let i = 0; i < mdast.length; i++) {
@@ -74,6 +106,15 @@ export class ParseMarkdown {
 		return index;
 	}
 
+	/**
+	 * Finds the index where a section ends, marked by a paragraph starting with `"--`.
+	 * Used to delimit the end of a component section in the Markdown AST.
+	 *
+	 * @param {Object} params - The input parameters.
+	 * @param {RootContent[]} params.mdast - The array of MDAST nodes being processed.
+	 * @param {number} params.startIndex - The starting index to begin searching from.
+	 * @returns {number} The index of the ending marker, or the end of the array if not found.
+	 */
 	static findEndIndex({ mdast, startIndex }: { mdast: RootContent[]; startIndex: number }): number {
 		let index = mdast.length;
 		for (let i = startIndex; i < mdast.length; i++) {
@@ -89,6 +130,21 @@ export class ParseMarkdown {
 		return index;
 	}
 
+	/**
+	 * Transforms a portion of MDAST (Markdown Abstract Syntax Tree) into a `FiveMarkdown` object.
+	 *
+	 * This method processes nodes to extract content, identifies component boundaries
+	 * using special markers (`--"ComponentName` and `"--`), and handles nested components.
+	 *
+	 * @param mdast - The array of MDAST nodes to transform.
+	 * @param isChildren - Indicates whether this section is a nested child component.
+	 *                     Affects how nested components and end markers are handled.
+	 * @returns {FiveMarkdown} The transformed section, including:
+	 *   - `ComponentName`: Derived from `--"ComponentName` marker, defaults to "GenericComponent".
+	 *   - `rawSection`: The reprocessed Markdown string of the section.
+	 *   - `elements`: Array of parsed content.
+	 *   - `children`: Nested components (if any).
+	 */
 	static transformSection(mdast: RootContent[], isChildren?: boolean): FiveMarkdown {
 		let ComponentName = "GenericComponent";
 

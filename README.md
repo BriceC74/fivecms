@@ -9,6 +9,7 @@
 This project is a core of a CMS. It is designed to be as flexible as possible.
 
 The idea is simple you have 2 core folders inside the src/data directory :
+
 - content
 - locales
 
@@ -67,12 +68,12 @@ Graphql is a query language for APIs and a runtime for fulfilling those queries 
 And it's a mature technology, used by many companies like Facebook, Netflix, etc.
 It can be implemented in a lot of languages, and it's easy to learn.
 
-
 ## Installation
 
 ```bash
 npm ci
 ```
+
 `npm ci` is used instead of npm install to ensure that the exact versions of the dependencies are installed as specified in the package-lock.json file. This is important for ensuring that the application runs consistently across different environments.
 
 ## Usage
@@ -80,12 +81,83 @@ npm ci
 ```bash
 npm run build
 ```
+
 It will generate all graphql schemas and prepare it to be resolved by the server.
 
 ```bash
 npm run start
 ```
+
+It will launch the graphql server on port 4000.
+
+```bash
+npm run build.start
+```
+
 It will build and launch the graphql server on port 4000.
 
 Then you can access the graphql playground at http://localhost:4000/graphql
 
+### Example of queries
+
+Gather all content from all page.md:
+
+```graphql
+query ExampleQuery {
+	contents {
+		sections {
+			...ComponentFields
+			children(depth: 3) {
+				...ComponentFields
+			}
+		}
+	}
+}
+
+fragment ComponentFields on Component {
+	ComponentName
+	rawSection
+	elements {
+		... on FiveHeadingElement {
+			heading {
+				level
+				text
+			}
+		}
+		... on FiveParagraphElement {
+			paragraph
+		}
+	}
+}
+```
+
+Gather all content from a specified page.md:
+
+```graphql
+query ExampleQuery($path: String!) {
+	content(path: $path) {
+		sections {
+			...ComponentFields
+			children(depth: 3) {
+				...ComponentFields
+			}
+		}
+	}
+}
+
+fragment ComponentFields on Component {
+	ComponentName
+	rawSection
+	elements {
+		... on FiveHeadingElement {
+			heading {
+				level
+				text
+			}
+		}
+		... on FiveParagraphElement {
+			paragraph
+		}
+	}
+}
+```

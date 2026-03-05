@@ -1,5 +1,9 @@
 import { getContents, getContent } from "../lib/utils/GetContents";
 
+/**
+ * Implementations of the Graphql queries, used by Apollo.
+ * This call inner systems to gather content.
+ */
 export const resolvers = {
 	Element: {
 		__resolveType(obj: any) {
